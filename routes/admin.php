@@ -1,9 +1,7 @@
 <?php
 
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\User\BaseController;
-use App\Http\Controllers\User\ProfileController;
-use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\admin\BaseController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,30 +15,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/clear', function () {
-    Artisan::call('config:cache');
-    Artisan::call('cache:clear');
-    Artisan::call('route:clear');
-    Artisan::call('view:clear');
-    return "Cleared";
-});
-
 Route::group(
     ['prefix' => "/"],
     function () {
 
-        Route::get('/', [HomeController::class, 'index'])->name('index');
-
         Route::group(
-            ['prefix' => 'user', 'as' => 'user.', 'middleware' => ['web', 'auth', 'checkMail']],
+            ['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['web', 'auth', 'admin', 'checkMail']],
             function () {
                 Route::get('/', [BaseController::class, 'home'])->name('home');
                 Route::get('dashboard', [BaseController::class, 'index'])->name('index');
-                // Route::resource('profiles', ProfileController::class);
+                // Route::get('users/datatable', [UserController::class, 'datatable'])->name('users.datatable');
+                // Route::get('users/connect/{id}', [UserController::class, 'connect'])->name('users.connect');
+                // Route::get('users/data', [UserController::class, 'data'])->name('users.data');
+                // Route::resource('users', UserController::class);
             }
         );
     }
 );
-
-require __DIR__ . '/auth.php';
-require __DIR__ . '/admin.php';
